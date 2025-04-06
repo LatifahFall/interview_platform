@@ -6,4 +6,4 @@ import Vapi from '@vapi-ai/web';
 //then the info is sent to our API input (developped using route handlers) that feeds it to Gemini
 //gemini generates the questions based on said conversation and the info is stored in a firestore database
 
-export const vapi = new Vapi(process.env.NEXT_PUBLIC_VAPI_AI_KEY!);
+export const vapi = new Vapi(process.env.NEXT_PUBLIC_VAPI_WEB_TOKEN!);

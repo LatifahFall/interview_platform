@@ -111,3 +111,58 @@ export async function isAuthenticated(){
     //turns the existance/nonexistence of a user into a boolean value
     return !!user;
 }
+
+export async function getInterviewsByUserId(userId: string) : Promise<Interview[] | null>{
+    console.log("[DEBUG] Querying interviews for user ID:", userId); // 🚨 Log input
+    try {
+        const interviews = await db
+            .collection('interviews')
+            .where('userId', '==', userId)
+            .orderBy('createdAt', 'desc')
+            .get();
+
+        console.log("[DEBUG] Firestore Snapshot:", {
+            size: interviews.size, // Number of documents found
+            docs: interviews.docs.map(doc => doc.data()) // Raw document data
+        });
+
+        return interviews.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data()
+        })) as Interview[];
+
+    }catch(error) {
+        console.error("[ERROR] Failed to query interviews:");
+        return null;
+    }
+}
+
+export async function getLatestInterviews(params: GetLatestInterviewsParams) : Promise<Interview[] | null>{
+    const {userId, limit = 20} = params;
+    console.log("[DEBUG] Fetching latest interviews for user ID:", userId);
+
+    try {
+        const interviews = await db
+            .collection('interviews')
+            .orderBy('createdAt', 'desc')
+            .where('finalized', '==', true)
+            .where('userId', '!=', userId)
+            .limit(limit)
+            .get();
+
+        console.log("[DEBUG] Latest Interviews Snapshot:", {
+            size: interviews.size,
+            docs: interviews.docs.map(doc => doc.data())
+        });
+
+        return interviews.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data()
+        })) as Interview[];
+    }catch(error) {
+        console.error("[ERROR] Failed to fetch latest interviews:", error);
+        return null;
+    }
+}
+
+

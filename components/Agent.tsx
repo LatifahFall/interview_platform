@@ -41,7 +41,7 @@ const Agent = ({userName, userId, type}: AgentProps) => {
 
         const onError = (error: Error) => console.log('Error',error);
 
-        //vapi "event listeners"
+        //vapi event listeners
         vapi.on('call-start', onCallStart);
         vapi.on('call-end', onCallEnd);
         vapi.on('message', onMessage);
